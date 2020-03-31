@@ -6,7 +6,7 @@ on:
     paths: 
       - 'Pwdlyser.sln'
       - 'Pwdlyser/**'
-      
+
 jobs:
   generate:
     runs-on: [ubuntu-latest]
