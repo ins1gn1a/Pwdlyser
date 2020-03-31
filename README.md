@@ -1,9 +1,7 @@
 # Pwdlyser
 ![](https://img.shields.io/maintenance/yes/2030.svg)
-[![GitHub license](https://img.shields.io/github/license/ins1gn1a/Pwdlyser)](https://github.com/ins1gn1a/Pwdlyser/blob/master/LICENSE)
-[![GitHub pull-requests](https://img.shields.io/github/issues-pr/ins1gn1a/Pwdlyser.svg)](https://GitHub.com/ins1gn1a/Pwdlyser/pull/)
-[![GitHub contributors](https://img.shields.io/github/contributors/ins1gn1a/Pwdlyser.svg)](https://GitHub.com/ins1gn1a/Pwdlyser/graphs/contributors/)
-[![GitHub issues](https://img.shields.io/github/issues/ins1ng1a/Pwdlyser)](https://GitHub.com/ins1gn1a/Pwdlyser/issues/)
+[![GitHub license](https://img.shields.io/github/license/ins1gn1a/pwdlyser)](https://github.com/ins1gn1a/Pwdlyser/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/ins1gn1a/pwdlyser)](https://github.com/ins1gn1a/pwdlyser/issues)
 > New repo for Public release
 
 Pwdlyser (**P**ass**w**or**d**-Ana**lyser**) is a multi-functional analysis tool created to provide security professionals and organisations aiming to improve their security posture with the ability to easily review and analyse passwords from Active Directory domain accounts, databases, etc. The second was that it should be able to be used by security consultants and penetration testers to identify and target key-account passwords (such as Domain Admins), the most common Hashcat character password masks, and to provide an output for estimated entropy of the most common passwords within the list.
