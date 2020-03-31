@@ -1,0 +1,94 @@
+name: "main-release"
+
+on:
+  push:
+    branches: master
+    paths: 
+      - 'Pwdlyser.sln'
+      - 'Pwdlyser/**'
+      
+jobs:
+  generate:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v1
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@master"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: 'Get next version'
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@master"
+        with:
+          version: ${{ steps.previoustag.outputs.tag }}
+
+      - name: Patch Version
+        run: echo ${{ steps.semvers.outputs.patch }} > next_ver.txt
+
+      - name: Minor Version
+        if: "contains(github.event.head_commit.message, 'MINOR')"
+        run: echo ${{ steps.semvers.outputs.minor }} > next_ver.txt
+
+      - name: Major Version
+        if: "contains(github.event.head_commit.message, 'MAJOR')"
+        run: echo ${{ steps.semvers.outputs.major }} > next_ver.txt
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: next_ver
+          path: next_ver.txt
+
+  build:
+    needs: [generate]
+    runs-on: [windows-latest]
+    steps:
+
+      - uses: actions/checkout@v1
+
+
+      - uses: actions/download-artifact@v1
+        with:
+          name: next_ver
+      - shell: bash
+        run:
+          echo "::set-env name=NEXT_SEMVER::$(cat next_ver/next_ver.txt | cut -d \- -f 1)"
+
+      - name: Test output
+        run: echo $NEXT_SEMVER
+
+      - name: Setup Nuget.exe
+        uses: warrenbuckley/Setup-Nuget@v1
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.NEXT_SEMVER }}
+          release_name: ${{ env.NEXT_SEMVER }}
+          draft: false
+          prerelease: false
+
+      - name: Nuget Restore 
+        run: nuget restore "Pwdlyser.sln"
+
+      - name: Setup MSBuild.exe
+        uses: warrenbuckley/Setup-MSBuild@v1
+
+      - name: MSBuild
+        working-directory: "Pwdlyser"
+        run: msbuild $Env:GITHUB_WORKSPACE\Pwdlyser\Pwdlyser.csproj /p:Configuration=Release /t:Build /p:PublicRelease=true /property:Platform=x64 /p:VersionNumber=${{ env.NEXT_SEMVER }}
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: Pwdlyser\bin\x64\Release\Pwdlyser.exe
+          asset_name: Pwdlyser.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
