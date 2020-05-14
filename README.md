@@ -14,7 +14,7 @@ The result of this is a tool that provides a fantastic granular output and a sim
 
 
 # Releases
-See the [Releases page](https://github.com/ins1gn1a/Pwdlyser/releases/tag/latest) for the [pre-compiled binaries](https://github.com/ins1gn1a/Pwdlyser/releases/download/latest/Pwdlyser.exe).
+See the [Releases page](https://github.com/ins1gn1a/Pwdlyser/releases) for the [pre-compiled binaries](https://github.com/ins1gn1a/Pwdlyser/releases/download/latest/Pwdlyser.exe).
 
 # Pwned Passwords API
 Thanks to Troy Hunt for hosting this service - it makes a valued addition to Pwdlyser!
