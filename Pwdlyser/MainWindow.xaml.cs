@@ -1969,6 +1969,7 @@ namespace Pwdlyser
                 RunHistory(), RunCharacter(), RunLength(), RunAdmin(), RunUsername(),
                 RunWeak(), AnalysisCharPosition());
 
+
             await PutTaskDelay();
 
             if (PwnedAdminCheckBool == true)
@@ -2279,7 +2280,6 @@ namespace Pwdlyser
             }
             else if (CheckBoxBaseWordDictLarge.IsChecked == true)
             {
-                MessageBox.Show("Please note that using the large built-in multi-language dictionary can take a considerable amount of time to process. See the 'Settings' menu for the current running status during analysis.", "Large Dictionary Analysis", MessageBoxButton.OK, MessageBoxImage.Warning);
                 commondictcheck = true;
                 commondictchecklarge = true;
                 Dispatcher.Invoke(() => CheckBoxBaseWordDict.IsChecked = false);
@@ -2575,7 +2575,10 @@ namespace Pwdlyser
 
             var history_regex = new Regex(@"_history[0-9]");
 
-            foreach (DataRow row in RawDataTable.Rows)
+            
+            Parallel.ForEach(RawDataTable.Rows.Cast<DataRow>(), new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 10 }, (row) =>
+
+            //foreach (DataRow row in RawDataTable.Rows)
             {
 
                 // Set from raw data
@@ -2590,7 +2593,7 @@ namespace Pwdlyser
 
                 if (BoolIncludeHistory == false && history_regex.Match(username).Success)
                 {
-                    continue;
+                    return;
                     //return;
                 }
 
@@ -2603,7 +2606,7 @@ namespace Pwdlyser
                         BoolSummaryUser = true;
                     }
                 }
-            };
+            });
 
 
             DataView dv = DataTableUsernames.DefaultView;
@@ -2636,7 +2639,9 @@ namespace Pwdlyser
             var reuse_regex_ext = new Regex(@"_history[0-9][0-9]");
 
             //foreach (DataRow row in RawDataTable.Rows)
-            Parallel.ForEach(RawDataTable.Rows.Cast<DataRow>(), new ParallelOptions { MaxDegreeOfParallelism = 2 }, (row) =>
+            //Parallel.ForEach(RawDataTable.Rows.Cast<DataRow>(), new ParallelOptions { MaxDegreeOfParallelism = 4 }, (row) =>
+            Parallel.ForEach(RawDataTable.Rows.Cast<DataRow>(), new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 10 }, (row) =>
+
             {
                 string user1 = row[0].ToString();
                 string pass1 = row[1].ToString();
@@ -2760,7 +2765,7 @@ namespace Pwdlyser
             {
 
 
-                Parallel.ForEach(RawDataTable.Rows.Cast<DataRow>(), new ParallelOptions { MaxDegreeOfParallelism = 4 }, (row) => // loop through raw data
+                Parallel.ForEach(RawDataTable.Rows.Cast<DataRow>(), new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 10 }, (row) => // loop through raw data
                 //foreach (DataRow row in RawDataTable.Rows)
 
                 {
@@ -2986,6 +2991,7 @@ namespace Pwdlyser
             int count = 0;
 
             var history_regex = new Regex(@"_history[0-9]");
+
 
             foreach (DataRow row in RawDataTable.Rows)
             {
@@ -3953,7 +3959,7 @@ namespace Pwdlyser
 
             string StringSummaryXMLTemp;
             // Temp create XML Format
-            StringSummaryXMLOutput = "<?xml version=\"1.0\" encoding=\"utf8\"?>";
+            StringSummaryXMLOutput = " <?xml version='1.0' encoding='utf8'?>";
             StringSummaryXMLOutput += "\n<items source=\"" + Properties.Settings.Default.VulnIdSource + "\" version=\"1.0\">";
             StringSummaryXMLOutput += "\n\t<item ipaddress=\"\" hostname=\"" + SummaryXMLDomain.Text + "\">";
             StringSummaryXMLOutput += "\n\t\t<services>";
@@ -5275,65 +5281,67 @@ namespace Pwdlyser
         private string DateTimePass(string password)
         {
 
-            string[,] dateTimeList = new string[,]
+            var dateTimeList = new List<string>
             {
-                {"january"},
-                {"february"},
-                {"march"},
-                {"april"},
-                {"june"},
-                {"july"},
-                {"august"},
-                {"september"},
-                {"october"},
-                {"november"},
-                {"december"},
-                {"janvier"},
-                {"fevrier"},
-                //{"mars"},
-                //{"avril"},
-                //{"mai"},
-                {"juin"},
-                {"juillet"},
-                {"aout"},
-                {"septembre"},
-                {"octobre"},
-                {"novembre"},
-                {"decembre"},
-                {"enero"},
-                {"febrero"},
-                {"marzo"},
-                {"abril"},
-                //{"mayo"},
-                {"junio"},
-                {"julio"},
-                {"agosto"},
-                {"septiembre"},
-                {"octubre"},
-                {"noviembre"},
-                {"diciembre"},
-                {"monday"},
-                {"tuesday"},
-                {"wednesday"},
-                {"thursday"},
-                {"friday"},
-                {"saturday"},
-                {"sunday"},
-                {"spring"},
-                {"summer"},
-                {"autumn"},
-                {"winter"},
+                    {"january"},
+                    {"february"},
+                    {"march"},
+                    {"april"},
+                    {"june"},
+                    {"july"},
+                    {"august"},
+                    {"september"},
+                    {"october"},
+                    {"november"},
+                    {"december"},
+                    {"janvier"},
+                    {"fevrier"},
+                    //{"mars"},
+                    //{"avril"},
+                    //{"mai"},
+                    {"juin"},
+                    {"juillet"},
+                    {"aout"},
+                    {"septembre"},
+                    {"octobre"},
+                    {"novembre"},
+                    {"decembre"},
+                    {"enero"},
+                    {"febrero"},
+                    {"marzo"},
+                    {"abril"},
+                    //{"mayo"},
+                    {"junio"},
+                    {"julio"},
+                    {"agosto"},
+                    {"septiembre"},
+                    {"octubre"},
+                    {"noviembre"},
+                    {"diciembre"},
+                    {"monday"},
+                    {"tuesday"},
+                    {"wednesday"},
+                    {"thursday"},
+                    {"friday"},
+                    {"saturday"},
+                    {"sunday"},
+                    {"spring"},
+                    {"summer"},
+                    {"autumn"},
+                    {"winter"},
             };
 
-            foreach (string dateTimePass in dateTimeList)
+            string b = dateTimeList.AsParallel().FirstOrDefault(dateTimePass => Deleet_password(password).ToLower().Contains(dateTimePass.ToLower().Replace("\r", "")));
+            if (b != null)
             {
-                string deleeted = Deleet_password(password);
-                if (deleeted.ToString().ToLower().Contains(dateTimePass.ToLower()))
-                {
-                    return (dateTimePass.ToString());
-                }
+                return b.Replace("\r", "");
             }
-            return ("NOTVALID");
+            else
+            {
+                return ("NOTVALID");
+            }
+
+
         }
 
         public string FirstLetterToUpper(string str)
@@ -5470,6 +5478,8 @@ namespace Pwdlyser
                 {"3579"},
                 {"0864"},
             };
+
+
 
             foreach (string keyboardPass in keyboardList)
             {
@@ -5651,58 +5661,42 @@ namespace Pwdlyser
         private string CommonPass(string password)
         {
 
-            if (commondictcheck == true)
-            {
-                if (commondictchecklarge)
+                if (commondictcheck == true)
                 {
-                    // loops through large lang dictionary
-                    foreach (string commonPass in langdictlargearray)
+                    if (commondictchecklarge)
                     {
-                        if (commonPass.Replace("\r", "").Length > password.Length)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            //string commonPass = langdictlargearray[i];
-                            string deleeted = Deleet_password(password);
-                            if (deleeted.ToString().ToLower().Contains(commonPass.Replace("\r", "").ToLower()))
-                            {
-                                return commonPass.ToString();
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
+                    // loops through large lang dictionary
+                    //foreach (string commonPass in langdictlargearray)
+                    string deleeted = Deleet_password(password).ToLower();
+                    var b = langdictlargearray.AsParallel().FirstOrDefault(s => deleeted.Contains(s.ToLower().Replace("\r", "")));
+
+                    if (b != null)
+                    {
+                        return b.Replace("\r","");
+                    }
+                    else
+                    {
+                        return ("NOTVALID");
+                    }
 
                     }
-                    return ("NOTVALID");
-                }
 
                 else
                 {
-                    // loops through normal 10000 dictionary
-                    foreach (string commonPass in langdictarray)
-                    {
-                        if (commonPass.Replace("\r", "").Length > password.Length)
+                        // loops through large lang dictionary
+                        //foreach (string commonPass in langdictlargearray)
+                        string deleeted = Deleet_password(password).ToLower();
+                        var b = langdictarray.AsParallel().FirstOrDefault(s => deleeted.Contains(s.ToLower().Replace("\r", "")));
+
+                        if (b != null)
                         {
-                            continue;
+                            return b.Replace("\r", "");
                         }
                         else
                         {
-                            string deleeted = Deleet_password(password);
-                            if (deleeted.ToString().ToLower().Contains(commonPass.Replace("\r", "").ToLower()))
-                            {
-                                return (commonPass.Replace("\r", "").ToString());
-                            }
-                            else
-                            {
-                                continue;
-                            }
+                            return ("NOTVALID");
                         }
-                    }
-                    return ("NOTVALID");
+
                 }
             }
 
@@ -5710,25 +5704,25 @@ namespace Pwdlyser
             {
                 if (CommonPassListArray.Count() > 0)
                 {
-                    foreach (string commonPass in CommonPassListArray)
+
+                
+                    string deleeted = Deleet_password(password).ToLower();
+                    var b = CommonPassListArray.AsParallel().FirstOrDefault(s => deleeted.Contains(s.ToLower().Replace("\r", "")));
+
+                    if (b != null)
                     {
-                        string deleeted = Deleet_password(password);
-                        if (deleeted.ToString().ToLower().Contains(commonPass.ToLower()))
-                        {
-                            return (commonPass.ToString());
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                        return b.Replace("\r", "");
                     }
-                    return ("NOTVALID");
+                    else
+                    {
+                        return ("NOTVALID");
+                    }
                 }
                 else
                 {
                     return ("NOTVALID");
-
                 }
+
             }
 
 
@@ -6140,6 +6134,16 @@ namespace Pwdlyser
         public void CreateTotalXML()
         {
             var filePath = Environment.ExpandEnvironmentVariables(Properties.Settings.Default.TotalOverTimeSettingsPath);
+
+            // Hacky job to create initial Pwdlyser directory in app-data. Not being created by default for some reason?
+            try
+            {
+                Directory.CreateDirectory(filePath.Replace("pwdlyser-total.xml",""));
+            }
+            catch
+            {
+
+            }
 
             using (StreamWriter sw = File.CreateText(filePath))
             {
