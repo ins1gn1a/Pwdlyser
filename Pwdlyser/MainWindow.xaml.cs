@@ -1871,6 +1871,7 @@ namespace Pwdlyser
 
         private void ProgressBarMax()
         {
+
             int maxCount = 32;
 
             if (CheckAnalysisFrequency.IsChecked == false) { maxCount = maxCount - 3; } // 3
@@ -1891,14 +1892,8 @@ namespace Pwdlyser
             if (CheckAnalysisHashcat.IsChecked == false) { maxCount = maxCount - 2; } // 2
             // 32
 
-            if (maxCount == 32)
-            {
-                analysisprogress.Maximum = maxCount;
-            }
-            else
-            {
-                analysisprogress.Maximum = maxCount;
-            }
+            analysisprogress.Maximum = maxCount;
+
         }
 
         public void SetTimeElapsedBinding()
