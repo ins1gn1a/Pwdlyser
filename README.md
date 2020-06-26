@@ -9,8 +9,7 @@ Pwdlyser (**P**ass**w**or**d**-Ana**lyser**) is a multi-functional analysis too
 The result of this is a tool that provides a fantastic granular output and a simple report-ready format, both from a high level management summary and that of a more technical detail. The enterprise version also includes the ability to review dynamically-generated graphs and charts, relating to the key issues outlined within the results, along with an overarching review score, which can be used when performing regular audits to track and gauge improvements to securing the corporate password posture.
 
 ## Builds
-[![CI Status](https://github.com/ins1gn1a/Pwdlyser/workflows/main-release/badge.svg?branch=master)](https://github.com/ins1gn1a/Pwdlyser/actions) 
-[![CI Status](https://github.com/ins1gn1a/Pwdlyser/workflows/dev-build-check/badge.svg?branch=dev)](https://github.com/ins1gn1a/Pwdlyser/actions)
+![dev-build-check](https://github.com/ins1gn1a/Pwdlyser/workflows/dev-build-check/badge.svg?branch=Dev)
 
 
 # Releases
