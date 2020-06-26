@@ -206,7 +206,8 @@ namespace Pwdlyser
                 TabItemDashboard.Visibility = Visibility.Collapsed;
                 TabAnalysis.Visibility = Visibility.Visible;
                 TabWordlist.Visibility = Visibility.Visible;
-                TabXMLOutput.Visibility = Visibility.Collapsed;
+                TabXMLOutput.Visibility = Visibility.Visible;
+                //TabXMLOutput.Visibility = Visibility.Collapsed;
                 TabSummary.Visibility = Visibility.Collapsed;
                 Dispatcher.BeginInvoke((Action)(() => MainTabControl.SelectedIndex = 1));
                 Dispatcher.BeginInvoke((Action)(() => AnalysisTabControl.SelectedIndex = 0));
@@ -5326,7 +5327,7 @@ namespace Pwdlyser
                     {"winter"},
             };
 
-            string b = dateTimeList.AsParallel().FirstOrDefault(dateTimePass => Deleet_password(password).ToLower().Contains(dateTimePass.ToLower().Replace("\r", "")));
+            string b = dateTimeList.FirstOrDefault(dateTimePass => Deleet_password(password).ToLower().Contains(dateTimePass.ToLower().Replace("\r", "")));
             if (b != null)
             {
                 return b.Replace("\r", "");
@@ -5429,7 +5430,7 @@ namespace Pwdlyser
         // Check password against known keyboard patterns
         private string KeyboardPass(string password)
         {
-            string[,] keyboardList = new string[,]
+            var keyboardList = new List<string>
             {
                 {"1qaz2wsx"},
                 {"!qaz2wsx"},
@@ -5474,17 +5475,25 @@ namespace Pwdlyser
                 {"0864"},
             };
 
-
-
-            foreach (string keyboardPass in keyboardList)
+            string b = keyboardList.FirstOrDefault(keyboardPass => Deleet_password(password).ToLower().Contains(keyboardPass.ToLower().Replace("\r", "")));
+            if (b != null)
             {
-                string deleeted = Deleet_password(password);
-                if (deleeted.ToString().ToLower().Contains(keyboardPass.ToLower()))
-                {
-                    return (keyboardPass.ToString());
-                }
+                return b.Replace("\r", "");
             }
-            return ("NOTVALID");
+            else
+            {
+                return ("NOTVALID");
+            }
+
+            //foreach (string keyboardPass in keyboardList)
+            //{
+            //    string deleeted = Deleet_password(password);
+            //    if (deleeted.ToString().ToLower().Contains(keyboardPass.ToLower()))
+            //    {
+            //        return (keyboardPass.ToString());
+            //    }
+            //}
+            //return ("NOTVALID");
         }
 
         public class WebClientWithTimeout : WebClient
@@ -7045,6 +7054,7 @@ namespace Pwdlyser
             TabItemDashboard.Visibility = Visibility.Collapsed;
             TabAnalysis.Visibility = Visibility.Visible;
             TabWordlist.Visibility = Visibility.Visible;
+            TabXMLOutput.Visibility = Visibility.Visible;
         }
 
         private void ButtonAddBaseword_Click(object sender, RoutedEventArgs e)
